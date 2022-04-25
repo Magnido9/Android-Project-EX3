@@ -1,16 +1,20 @@
-# start
+# State of the art Start-up name generator
 
 Get a name.
 
-## Getting Started
+## About the project
 
-This project is a starting point for a Flutter application.
+This is the project of the best start up name generating app that exists in the market.
 
-A few resources to get you started if this is your first Flutter project:
+## Answers to the dry part
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+1.a. The class used is snappingSheet controller.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1.b. The controller allows the developer to control and monitor the height to which the snapping sheet is open to. It also allows to add multiple snapping positions. It also allows to control whether the snapping sheet is currently snapping or not.
+
+2.The snapping position object has a parameter called snappingCurve that parameter receive a Curve object which allows us to control the animation in which the snapping sheet snaps to this position, the snapping position object also has a snappingDuration parameter that allows us to control the length of this animation.
+
+3.Gesture dectector allows us much more controls, like dragable for example, that Inkwell does not offer, on the other hand, inkwell includes the ripple effect tap which gesture detector does not give us. 
+
+
+![](https://i.imgflip.com/6drqz0.jpg)
