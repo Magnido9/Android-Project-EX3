@@ -45,8 +45,7 @@ class SimpleSnappingSheetState extends State<SimpleSnappingSheet> {
     );
   }
 
-  String url =
-      "https://firebasestorage.googleapis.com/v0/b/startup-name-generator-ultra.appspot.com/o/users%2Ftest?alt=media&token=ce45d64e-7671-452f-bb3d-8a831072af0e";
+  String url = '';
   loadImage() async {
     url = await FirebaseStorage.instance
         .ref('/users/' + FirebaseAuth.instance.currentUser!.uid.toString())
@@ -57,77 +56,89 @@ class SimpleSnappingSheetState extends State<SimpleSnappingSheet> {
 
   @override
   void initState() {
+    print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
     loadImage();
+
     super.initState();
   }
 
   void refresh() {
     setState(() {});
   }
-  void up(){
+
+  void up() {
     snappingSheetController.setSnappingSheetPosition(400);
   }
-  void down(){
+
+  void down() {
     snappingSheetController.setSnappingSheetPosition(40);
   }
 
   @override
   Widget build(BuildContext context) {
-    return AuthRepository.instance().isAuthenticated?SnappingSheet(
-      child: RandomWords(refresh),
-      lockOverflowDrag: true,
-      snappingPositions: [
-        SnappingPosition.factor(
-          positionFactor: 0.0,
-          snappingCurve: Curves.easeOutExpo,
-          snappingDuration: Duration(seconds: 1),
-          grabbingContentOffset: GrabbingContentOffset.top,
-        ),
-        SnappingPosition.factor(
-          snappingCurve: Curves.elasticOut,
-          snappingDuration: Duration(milliseconds: 1750),
-          positionFactor: 0.5,
-        ),
-        SnappingPosition.factor(
-          grabbingContentOffset: GrabbingContentOffset.bottom,
-          snappingCurve: Curves.easeInExpo,
-          snappingDuration: Duration(seconds: 1),
-          positionFactor: 0.9,
-        ),
-      ],
-      grabbing: GrabbingWidget(up,down),
-      grabbingHeight: 75,
-      sheetAbove: null,
-      controller: snappingSheetController,
-      sheetBelow: SnappingSheetContent(
-        draggable: true,
-        child: Container(
-          color: Colors.white,
-          child: Container(
-            child: ListView(children: [Column(
-              children: [
-                Container(
-                    height: 200,
-                    width: 200,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(image: NetworkImage(url)))),
-                Container(height: 50),
-                MaterialButton(
-                    onPressed: () async {
-                      pickImage();
-                      setState(() async {});
-                    },
-                    child: Text(
-                      "Change avatar image",
-                      style: TextStyle(fontSize: 18),
-                    ))
-              ],
-            )]),
-          ),
-        ),
-      ),
-    ):RandomWords(refresh);
+    return AuthRepository.instance().isAuthenticated
+        ? SnappingSheet(
+            child: RandomWords(refresh),
+            lockOverflowDrag: true,
+            snappingPositions: [
+              SnappingPosition.factor(
+                positionFactor: 0.0,
+                snappingCurve: Curves.easeOutExpo,
+                snappingDuration: Duration(seconds: 1),
+                grabbingContentOffset: GrabbingContentOffset.top,
+              ),
+              SnappingPosition.factor(
+                snappingCurve: Curves.elasticOut,
+                snappingDuration: Duration(milliseconds: 1750),
+                positionFactor: 0.5,
+              ),
+              SnappingPosition.factor(
+                grabbingContentOffset: GrabbingContentOffset.bottom,
+                snappingCurve: Curves.easeInExpo,
+                snappingDuration: Duration(seconds: 1),
+                positionFactor: 0.9,
+              ),
+            ],
+            grabbing: GrabbingWidget(up, down),
+            grabbingHeight: 75,
+            sheetAbove: null,
+            controller: snappingSheetController,
+            sheetBelow: SnappingSheetContent(
+              draggable: true,
+              child: Container(
+                color: Colors.white,
+                child: Container(
+                  child: ListView(children: [
+                    Column(
+                      children: [
+                        Container(
+                            height: 200,
+                            width: 200,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    image: url != ''
+                                        ? NetworkImage(url)
+                                        : NetworkImage(
+                                            "https://as1.ftcdn.net/v2/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg")))),
+                        Container(height: 50),
+                        MaterialButton(
+                            onPressed: () async {
+                              pickImage();
+                              setState(() async {});
+                            },
+                            child: Text(
+                              "Change avatar image",
+                              style: TextStyle(fontSize: 18),
+                            ))
+                      ],
+                    )
+                  ]),
+                ),
+              ),
+            ),
+          )
+        : RandomWords(refresh);
   }
 }
 
@@ -144,137 +155,144 @@ class Background extends StatelessWidget {
     );
   }
 }
+
 class GrabbingWidget extends StatefulWidget {
   var up;
   var down;
-  GrabbingWidget(upf,downf){
-    up=upf;
-    down=downf;
+  GrabbingWidget(upf, downf) {
+    up = upf;
+    down = downf;
   }
   @override
-  GrabbingWidgetState createState() => GrabbingWidgetState(up,down);
+  GrabbingWidgetState createState() => GrabbingWidgetState(up, down);
 }
 
 class GrabbingWidgetState extends State<GrabbingWidget> {
   var up;
   var down;
-  bool isUp=false;
-  bool notClicked=true;
-  GrabbingWidgetState(upf,downf){
-    up=upf;
-    down=downf;
+  bool isUp = false;
+  bool notClicked = true;
+  GrabbingWidgetState(upf, downf) {
+    up = upf;
+    down = downf;
   }
   @override
   Widget build(BuildContext context) {
-    return notClicked?BackdropFilter(filter: ui.ImageFilter.blur(
-        sigmaX: 0.0,
-        sigmaY: 0.0,
-    ),
-    child:GestureDetector(child:Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        boxShadow: [
-          BoxShadow(blurRadius: 25, color: Colors.black.withOpacity(0.2)),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            height: 10,
-          ),
-          AuthRepository.instance().isAuthenticated
-              ? Text(
-                  "Welcome back " + (AuthRepository.instance().user!.email!),
-                  style: TextStyle(fontSize: 18,color: Colors.deepPurple),
-                )
-              : Container(),
-          Container(
-            height: 10,
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 20),
-            width: 100,
-            height: 7,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(5),
+    return notClicked
+        ? BackdropFilter(
+            filter: ui.ImageFilter.blur(
+              sigmaX: 0.0,
+              sigmaY: 0.0,
             ),
-          ),
-          Container(
-            color: Colors.grey[200],
-            height: 2,
-            margin: EdgeInsets.all(15).copyWith(top: 0, bottom: 0),
-          )
-        ],
-      ),
-    ),
-    onTap: (){
-      (!isUp)?up():down();
-      isUp=!isUp;
-      notClicked=!notClicked;
-      setState(() {
-
-      });
-      print("a");
-
-    },
-    )):BackdropFilter(filter: ui.ImageFilter.blur(
-      sigmaX: 5.0,
-      sigmaY: 5.0,
-    ),
-        child:GestureDetector(child:Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            boxShadow: [
-              BoxShadow(blurRadius: 25, color: Colors.black.withOpacity(0.2)),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                height: 10,
-              ),
-              AuthRepository.instance().isAuthenticated
-                  ? Text(
-                "Welcome back " + (AuthRepository.instance().user!.email!),
-                style: TextStyle(fontSize: 18,color: Colors.deepPurple),
-              )
-                  : Container(),
-              Container(
-                height: 10,
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 20),
-                width: 100,
-                height: 7,
+            child: GestureDetector(
+              child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 25, color: Colors.black.withOpacity(0.2)),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: 10,
+                    ),
+                    AuthRepository.instance().isAuthenticated
+                        ? Text(
+                            "Welcome back " +
+                                (AuthRepository.instance().user!.email!),
+                            style: TextStyle(
+                                fontSize: 18, color: Colors.deepPurple),
+                          )
+                        : Container(),
+                    Container(
+                      height: 10,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      width: 100,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.grey[200],
+                      height: 2,
+                      margin: EdgeInsets.all(15).copyWith(top: 0, bottom: 0),
+                    )
+                  ],
                 ),
               ),
-              Container(
-                color: Colors.grey[200],
-                height: 2,
-                margin: EdgeInsets.all(15).copyWith(top: 0, bottom: 0),
-              )
-            ],
-          ),
-        ),
-          onTap: (){
-            (!isUp)?up():down();
-            isUp=!isUp;
-            print("a");
-            notClicked=!notClicked;
-            setState(() {
-
-            });
-
-          },
-        ));
+              onTap: () {
+                (!isUp) ? up() : down();
+                isUp = !isUp;
+                notClicked = !notClicked;
+                setState(() {});
+                print("a");
+              },
+            ))
+        : BackdropFilter(
+            filter: ui.ImageFilter.blur(
+              sigmaX: 5.0,
+              sigmaY: 5.0,
+            ),
+            child: GestureDetector(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 25, color: Colors.black.withOpacity(0.2)),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: 10,
+                    ),
+                    AuthRepository.instance().isAuthenticated
+                        ? Text(
+                            "Welcome back " +
+                                (AuthRepository.instance().user!.email!),
+                            style: TextStyle(
+                                fontSize: 18, color: Colors.deepPurple),
+                          )
+                        : Container(),
+                    Container(
+                      height: 10,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      width: 100,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.grey[200],
+                      height: 2,
+                      margin: EdgeInsets.all(15).copyWith(top: 0, bottom: 0),
+                    )
+                  ],
+                ),
+              ),
+              onTap: () {
+                (!isUp) ? up() : down();
+                isUp = !isUp;
+                print("a");
+                notClicked = !notClicked;
+                setState(() {});
+              },
+            ));
   }
 }
 
@@ -378,8 +396,11 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   Future<dynamic> getWords() async {
     String? pid = AuthRepository.instance().user?.uid;
+    print('aaa');
+
     var v =
         (await FirebaseFirestore.instance.collection("words").doc(pid).get());
+    if (!v.exists) return <WordPair>{};
     var words;
     if (v["words"] == null) {
       words = [];
@@ -444,99 +465,123 @@ class _LoginState extends State<Login> {
                   } else {
                     setState(() => IsLoading = false);
                     Navigator.pop(context, getWords());
+                    setState(() {});
                   }
                 }),
           SignupButton(() async {
-            showModalBottomSheet(context: context, builder:
-                (BuildContext context) {
-              return Container(
-                height: 200,
-                color: Colors.amber,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text('Register',
-                          style: TextStyle(
-                            color: Colors.deepPurple,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          )),
-                      Container(
-                          color: Colors.white,
-                          margin: EdgeInsets.symmetric(horizontal: 50),
-                          child: TextFormField(
-                            controller: signupEmailController,
-                            decoration: InputDecoration(hintText: "Username"),
-                          )),
-                      Container(
-                          color: Colors.white,
-                          margin: EdgeInsets.symmetric(horizontal: 50),
-                          child: TextFormField(
-                            controller: signupPasswordController,
-                            decoration: InputDecoration(hintText: "Password"),
-                          )),
-                        ElevatedButton(onPressed:  ()async {
-                          Navigator.pop(context);
+            showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return Container(
+                    height: 200,
+                    color: Colors.amber,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text('Register',
+                              style: TextStyle(
+                                color: Colors.deepPurple,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              )),
+                          Container(
+                              color: Colors.white,
+                              margin: EdgeInsets.symmetric(horizontal: 50),
+                              child: TextFormField(
+                                controller: signupEmailController,
+                                decoration:
+                                    InputDecoration(hintText: "Username"),
+                              )),
+                          Container(
+                              color: Colors.white,
+                              margin: EdgeInsets.symmetric(horizontal: 50),
+                              child: TextFormField(
+                                controller: signupPasswordController,
+                                decoration:
+                                    InputDecoration(hintText: "Password"),
+                              )),
+                          ElevatedButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
 
-                          showModalBottomSheet(context: context, builder:
-                              (BuildContext context) {
-                            return Container(
-                                height: 200,
-                                color: Colors.amber,
-                                child: Center(
-                                child: Column(children: [
-                                  Text('Confirm password',
-                                      style: TextStyle(
-                                        color: Colors.deepPurple,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                      )),
-                                  Container(
-                                      color: Colors.white,
-                                      margin: EdgeInsets.symmetric(horizontal: 50),
-                                      child: TextFormField(
-                                        controller: confirmPassController,
-                                        decoration: InputDecoration(hintText: "password"),
-                                      )),
-
-                                ElevatedButton(onPressed:  ()async {
-
-                                   final String semail = signupEmailController.text.trim();
-                                   final String spassword = signupPasswordController.text.trim();
-                                   final String confirm=confirmPassController.text.trim();
-                                   if(!(confirm==spassword)){
-
-                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                           content:
-                                           Text('Passwords dont much')));
-                                       return;
-                                   }
-                                  dynamic result = await AuthRepository.instance()
-                                      .signUp(semail, spassword, context);
-                                  print(result);
-                                  if (result == null) {
-                                    setState(() => IsLoading = false);
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                        content:
-                                        Text('There was an error signing up into the app')));
-                                  } else {
-                                    setState(() => IsLoading = false);
-                                    Navigator.pop(context);
-                                  }
-                                } ,child:Text('Confirm'))
-                                ])));});
-
-                        }
-                      , child: Text('signup'))
-
-                    ],
-                  ),
-                ),
-              );
-            }
-            );
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                          height: 200,
+                                          color: Colors.amber,
+                                          child: Center(
+                                              child: Column(children: [
+                                            Text('Confirm password',
+                                                style: TextStyle(
+                                                  color: Colors.deepPurple,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w700,
+                                                )),
+                                            Container(
+                                                color: Colors.white,
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 50),
+                                                child: TextFormField(
+                                                  controller:
+                                                      confirmPassController,
+                                                  decoration: InputDecoration(
+                                                      hintText: "password"),
+                                                )),
+                                            ElevatedButton(
+                                                onPressed: () async {
+                                                  final String semail =
+                                                      signupEmailController.text
+                                                          .trim();
+                                                  final String spassword =
+                                                      signupPasswordController
+                                                          .text
+                                                          .trim();
+                                                  final String confirm =
+                                                      confirmPassController.text
+                                                          .trim();
+                                                  if (!(confirm == spassword)) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            content: Text(
+                                                                'Passwords dont much')));
+                                                    return;
+                                                  }
+                                                  dynamic result =
+                                                      await AuthRepository
+                                                              .instance()
+                                                          .signUp(
+                                                              semail,
+                                                              spassword,
+                                                              context);
+                                                  print(result);
+                                                  if (result == null) {
+                                                    setState(() =>
+                                                        IsLoading = false);
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            content: Text(
+                                                                'There was an error signing up into the app')));
+                                                  } else {
+                                                    setState(() =>
+                                                        IsLoading = false);
+                                                    Navigator.pop(context);
+                                                  }
+                                                },
+                                                child: Text('Confirm'))
+                                          ])));
+                                    });
+                              },
+                              child: Text('signup'))
+                        ],
+                      ),
+                    ),
+                  );
+                });
             IsLoading = true;
             final String email = emailController.text.trim();
             final String password = passwordController.text.trim();
@@ -547,8 +592,7 @@ class _LoginState extends State<Login> {
             if (result == null) {
               setState(() => IsLoading = false);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content:
-                  Text('There was an error loging into the app')));
+                  content: Text('There was an error loging into the app')));
             } else {
               setState(() => IsLoading = false);
               Navigator.pop(context, getWords());
@@ -593,43 +637,50 @@ class _RandomWordsState extends State<RandomWords> {
   }
 
   final _suggestions = <WordPair>[];
-  final _biggerFont = const TextStyle(fontSize: 18,color:Colors.black,fontWeight:FontWeight.w700);
+  final _biggerFont = const TextStyle(
+      fontSize: 18, color: Colors.black, fontWeight: FontWeight.w700);
   bool IsLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Startup Name Generator',style: TextStyle(color: Colors.white),),elevation: 0, actions: [
-        IconButton(
-          icon: const Icon(Icons.list),
-          onPressed: _pushSaved,
-          tooltip: 'Saved Suggestions',
-        ),
-        AuthRepository.instance().isAuthenticated
-            ? IconButton(
-                icon: const Icon(Icons.exit_to_app),
-                onPressed: () {
-                  setWords(_saved);
-                  AuthRepository.instance().signOut();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Successfully logged out')));
-                  setState(() {});
-                  widget.notifyParent();
-                },
-                tooltip: 'Login',
-              )
-            : IconButton(
-                icon: const Icon(Icons.login),
-                onPressed: () async {
-                  var a = await Navigator.pushNamed(context, '/Login');
-                  print(a);
-                  _saved = a as Set<WordPair>;
-                  print(_saved);
-                  setState(() {});
-                  widget.notifyParent();
-                },
-                tooltip: 'Login',
-              ),
-      ]),
+      appBar: AppBar(
+          title: const Text(
+            'Startup Name Generator',
+            style: TextStyle(color: Colors.white),
+          ),
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.list),
+              onPressed: _pushSaved,
+              tooltip: 'Saved Suggestions',
+            ),
+            AuthRepository.instance().isAuthenticated
+                ? IconButton(
+                    icon: const Icon(Icons.exit_to_app),
+                    onPressed: () {
+                      setWords(_saved);
+                      AuthRepository.instance().signOut();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Successfully logged out')));
+                      setState(() {});
+                      widget.notifyParent();
+                    },
+                    tooltip: 'Login',
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.login),
+                    onPressed: () async {
+                      var a = await Navigator.pushNamed(context, '/Login');
+                      print(a);
+                      _saved = a as Set<WordPair>;
+                      print(_saved);
+                      setState(() {});
+                      widget.notifyParent();
+                    },
+                    tooltip: 'Login',
+                  ),
+          ]),
       body: _buildSuggestions(),
     );
   }
