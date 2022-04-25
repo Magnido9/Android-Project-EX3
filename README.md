@@ -2,7 +2,7 @@
 
 Get a name.
 
-## Getting Started
+## About the project
 
 This is the project of the best start up name generating app that exists in the market.
 
