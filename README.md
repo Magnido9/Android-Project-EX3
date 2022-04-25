@@ -17,4 +17,4 @@ This is the project of the best start up name generating app that exists in the 
 3.Gesture dectector allows us much more controls, like dragable for example, that Inkwell does not offer, on the other hand, inkwell includes the ripple effect tap which gesture detector does not give us. 
 
 
-![](https://imgflip.com/i/6drqz0)
+![test](https://imgflip.com/i/6drqz0)
