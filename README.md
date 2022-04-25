@@ -15,3 +15,6 @@ This is the project of the best start up name generating app that exists in the 
 2.The snapping position object has a parameter called snappingCurve that parameter receive a Curve object which allows us to control the animation in which the snapping sheet snaps to this position, the snapping position object also has a snappingDuration parameter that allows us to control the length of this animation.
 
 3.Gesture dectector allows us much more controls, like dragable for example, that Inkwell does not offer, on the other hand, inkwell includes the ripple effect tap which gesture detector does not give us. 
+
+
+![](https://imgflip.com/i/6drqz0)
