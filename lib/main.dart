@@ -504,6 +504,7 @@ class _LoginState extends State<Login> {
                               )),
                           ElevatedButton(
                               onPressed: () async {
+                                print('tatata');
                                 Navigator.pop(context);
 
                                 showModalBottomSheet(
@@ -570,6 +571,9 @@ class _LoginState extends State<Login> {
                                                     setState(() =>
                                                         IsLoading = false);
                                                     Navigator.pop(context);
+
+                                                    Navigator.pop(context, getWords());
+                                                    setState(() {});
                                                   }
                                                 },
                                                 child: Text('Confirm'))
@@ -582,21 +586,7 @@ class _LoginState extends State<Login> {
                     ),
                   );
                 });
-            IsLoading = true;
-            final String email = emailController.text.trim();
-            final String password = passwordController.text.trim();
-            setState(() => IsLoading = true);
-            dynamic result = await AuthRepository.instance()
-                .signIn(email, password, context);
-            print(result);
-            if (result == null) {
-              setState(() => IsLoading = false);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('There was an error loging into the app')));
-            } else {
-              setState(() => IsLoading = false);
-              Navigator.pop(context, getWords());
-            }
+
           })
         ],
       ),
